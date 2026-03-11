@@ -1,0 +1,12 @@
+bin/
+obj/
+.vscode/
+.git/
+*.tmp
+*.log
+*.bak
+*.user
+.editorconfig
+.DS_Store
+*.suo
+*.userprefs

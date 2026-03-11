@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MyPacmanClient</RootNamespace>
+    <AssemblyName>MyPacmanClient</AssemblyName>
+  </PropertyGroup>
+
+  <!-- The SDK automatically includes all .cs files, so no need to explicitly compile Program.cs -->
+  <!-- <ItemGroup>
+    <Compile Include="Program.cs" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <Content Include="config.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

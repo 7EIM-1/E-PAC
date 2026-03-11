@@ -1,0 +1,6 @@
+# this file gives you the option to highlight lines pacman returns. You can use it to highlight packages with your 'keyword' in it.
+
+# example:
+
+# this will highlight every package that has cachyos in its name.
+cachyos

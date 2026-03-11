@@ -1,12 +1,28 @@
 ﻿
-
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 Console.CursorVisible = false;
+
+
+// maintain configuration lines across iterations
+List<string> configLines = new List<string>();
 
 while (true)
 {
     Console.WriteLine("What are you looking for? (type '/q' to quit): ");
     string input = Console.ReadLine();
+
+    // reload config each iteration, ignoring comments
+    if (File.Exists("./config.txt"))
+    {
+        configLines = File.ReadAllLines("./config.txt")
+            .Where(l => !l.StartsWith("#"))
+            .ToList();
+    }
+
     if (input.ToLower().Trim() == "/q")
     {
         break;
@@ -22,12 +38,21 @@ while (true)
         }
         else
         {
-            Console.WriteLine(searchResults.Length/2 +" packages found:\n------------------------------");
-            for (int i = 0; i < searchResults.Length-1; i += 1)
+            Console.WriteLine(searchResults.Length / 2 + " packages found:\n------------------------------");
+            for (int i = 0; i < searchResults.Length - 1; i += 1)
             {
-                if(i % 2 == 0)
+                if (i % 2 == 0)
                 {
-                    if(searchResults[i].Contains("[Installiert: "))
+                    bool matchesConfig = false;
+                    foreach (var cfg in configLines)
+                    {
+                        if (searchResults[i].Contains(cfg))
+                        {
+                            matchesConfig = true;
+                            break;
+                        }
+                    }
+                    if (searchResults[i].Contains("[Installiert") || searchResults[i].Contains("[Installed") || searchResults[i].Contains("[Aktuell") || searchResults[i].Contains("[Current") || matchesConfig)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
                     }
@@ -35,7 +60,7 @@ while (true)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                     }
-                    Console.WriteLine($"{(i/2) + 1}. {searchResults[i].Trim()}");
+                    Console.WriteLine($"{(i / 2) + 1}. {searchResults[i].Trim()}");
                     Console.ResetColor();
                 }
                 else
@@ -48,26 +73,26 @@ while (true)
         string selection = Console.ReadLine();
         if (selection.ToLower().Trim() == "/q")
         {
-            break; 
+            break;
         }
         else
         {
-            string[] selections = selection.Split(',',' ').Select(s => s.Trim()).ToArray();
+            string[] selections = selection.Split(',', ' ').Select(s => s.Trim()).ToArray();
             foreach (string sel in selections)
             {
-                 if (int.TryParse(sel, out int selectedIndex) && selectedIndex > 0 && selectedIndex <= searchResults.Length / 2)
-            {
-                string packageName = searchResults[(selectedIndex - 1) * 2].Split('/')[1].Trim().Split(' ')[0];
-                Console.WriteLine($"\nInstalling {packageName}...\n");
-                string installResult = pacmaninstallrequest(packageName);
-                Console.WriteLine(installResult);
+                if (int.TryParse(sel, out int selectedIndex) && selectedIndex > 0 && selectedIndex <= searchResults.Length / 2)
+                {
+                    string packageName = searchResults[(selectedIndex - 1) * 2].Split('/')[1].Trim().Split(' ')[0];
+                    Console.WriteLine($"\nInstalling {packageName}...\n");
+                    string installResult = pacmaninstallrequest(packageName);
+                    Console.WriteLine(installResult);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid selection. Please try again.");
+                }
             }
-            else
-            {
-                Console.WriteLine("Invalid selection. Please try again.");
-            }
-            }
-            
+
         }
     }
 
